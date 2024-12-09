@@ -21,6 +21,14 @@ describe("TestAsyncDecrypt", function () {
     this.fhevm = await createInstance();
   });
 
+  it("test async decrypt bool infinite loop", async function () {
+    const tx = await this.contract.connect(this.signers.carol).requestBoolInfinite();
+    await tx.wait();
+    await awaitAllDecryptionResults();
+    const y = await this.contract.yBool();
+    console.log(y);
+  });
+
   it("test async decrypt bool", async function () {
     const tx2 = await this.contract.connect(this.signers.carol).requestBool();
     await tx2.wait();

@@ -305,6 +305,23 @@ contract TestAsyncDecrypt is SepoliaZamaFHEVMConfig, SepoliaZamaGatewayConfig, G
         return decryptedInput;
     }
 
+    /// @notice Function to request decryption of a boolean value with an infinite loop in the callback
+    function requestBoolInfinite() public {
+        uint256[] memory cts = new uint256[](1);
+        cts[0] = Gateway.toUint256(xBool);
+        Gateway.requestDecryption(cts, this.callbackBoolInfinite.selector, 0, block.timestamp + 100, false);
+    }
+
+    /// @notice Callback function for the infinite loop decryption request (WARNING: This function will never complete)
+    function callbackBoolInfinite(uint256 /*requestID*/, bool decryptedInput) public onlyGateway returns (bool) {
+        uint256 i = 0;
+        while (true) {
+            i++;
+        }
+        yBool = decryptedInput;
+        return yBool;
+    }
+
     function requestEbytes256Trivial(bytes calldata value) public {
         ebytes256 inputTrivial = TFHE.asEbytes256(TFHE.padToBytes256(value));
         uint256[] memory cts = new uint256[](1);
