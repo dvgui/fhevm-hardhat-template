@@ -26,7 +26,6 @@ describe("TestAsyncDecrypt", function () {
     await tx.wait();
     await awaitAllDecryptionResults();
     const y = await this.contract.yBool();
-    console.log(y);
   });
 
   it("test async decrypt bool", async function () {

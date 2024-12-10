@@ -30,47 +30,15 @@ describe("Reencryption", function () {
     this.contractAddress = await this.contract.getAddress();
   });
 
-  it.skip("test reencrypt ebool", async function () {
+  it("test reencrypt ebool", async function () {
     const handle = await this.contract.xBool();
     const decryptedValue = await reencryptEbool(this.signers.alice, this.fhevm, handle, this.contractAddress);
     expect(decryptedValue).to.equal(true);
 
-    /*// on the other hand, Bob should be unable to read Alice's balance
-    const { publicKey: publicKeyBob, privateKey: privateKeyBob } = this.fhevm.generateKeypair();
-    const eip712Bob = this.fhevm.createEIP712(publicKeyBob, this.contractAddress);
-    const signatureBob = await this.signers.bob.signTypedData(
-      eip712Bob.domain,
-      { Reencrypt: eip712Bob.types.Reencrypt },
-      eip712Bob.message,
+    // on the other hand, Bob should be unable to read Alice's balance
+    await expect(reencryptEbool(this.signers.bob, this.fhevm, handle, this.contractAddress)).to.be.rejectedWith(
+      "User is not authorized to reencrypt this handle!",
     );
-    await expect(
-      this.fhevm.reencrypt(
-        handle,
-        privateKeyBob,
-        publicKeyBob,
-        signatureBob.replace("0x", ""),
-        this.contractAddress,
-        this.signers.bob.address,
-      ),
-    ).to.be.rejectedWith("User is not authorized to reencrypt this handle!");
-
-    // and should be impossible to call reencrypt if contractAddress === userAddress
-    const eip712b = this.fhevm.createEIP712(publicKey, this.signers.alice.address);
-    const signatureAliceb = await this.signers.alice.signTypedData(
-      eip712b.domain,
-      { Reencrypt: eip712b.types.Reencrypt },
-      eip712b.message,
-    );
-    await expect(
-      this.instances.alice.reencrypt(
-        handle,
-        privateKey,
-        publicKey,
-        signatureAliceb.replace("0x", ""),
-        this.signers.alice.address,
-        this.signers.alice.address,
-      ),
-    ).to.be.rejectedWith("userAddress should not be equal to contractAddress when requesting reencryption!");*/
   });
 
   it("test reencrypt euint4", async function () {
